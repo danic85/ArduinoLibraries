@@ -3,6 +3,8 @@
 
 #include "Arduino.h"
 
+#define SENSOR_READ 700 //@todo get actual value
+
 #define TRIGGER_PIN A3
 #define ECHO_PIN A2
 

@@ -1,4 +1,3 @@
-//#define SHELL_READ_PIN 0
 #define READING_TOLERANCE 5
 
 #define SHELL_ITERATION_DELAY 1000
@@ -8,6 +7,12 @@
 #include "CD74HC4067.h"
 #include "HCSR04.h"
 
+int actionGroups[][] = {
+  {DIRECTION_FORWARDS, DIRECTION_BACKWARDS, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_STOP},
+  {LIGHT_ON, LIGHT_OFF},
+  {SENSOR_READ}
+}
+
 // Initialise Modules
 HG7881 motors;
 Lights lights;
@@ -16,7 +21,6 @@ HCSR04 sensor;
 
 void setup() 
 {
-//  pinMode(SHELL_READ_PIN, INPUT);
   Serial.begin(9600);
 }
 
@@ -34,16 +38,28 @@ void loop()
   Serial.println(channel);
   int value = mux1.readChannel(channel);
   Serial.println(value);
-  
-  int lightActions[] = {LIGHT_ON, LIGHT_OFF};
-  int motorActions[] = {DIRECTION_FORWARDS, DIRECTION_BACKWARDS, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_STOP};
 
-  int motorAction = getMatch(value, motorActions,  (int)( sizeof(motorActions) / sizeof(motorActions[0])));
-  if (motorAction > -1) motors.doAction(motorAction);
-  else 
+  int action = -1;
+  int group = getActionGroup(value, actionGroups, action);
+
+  switch (group) 
   {
-    int lightAction = getMatch(value, lightActions,  (int)( sizeof(lightActions) / sizeof(lightActions[0])));
-    if (lightAction > -1) lights.doAction(lightAction);
+    case 0:
+      motors.doAction(action);
+      break;
+    case 1:
+      lights.doAction(action);
+      break;
+    case 2:
+      int distance = sensor.doPing();
+      if (distance < 4)
+      {
+        channel = 10; //@todo will be replaced
+      }
+      break;
+    default:
+      Serial.println("Unknown group or no match");
+      break;
   }
 }
 
@@ -66,6 +82,20 @@ int getMatch (int value, int *actions, int len)
         if (match) return actions[i];
     }
     return -1;
+}
+
+int getActionGroup(int value, int &actionGroups, int *action);
+{
+  for (int i; i  < (int)( sizeof(actionGroups) / sizeof(actionGroups[0])); i ++)
+  {
+    int match = getMatch(value, actionGroups[i], (int) (sizeof(actionGroups[i]) / sizeof(actionGroups[i][0]));
+    if (match > -1)
+    {
+      action = match;
+      return i;
+    }
+  }
+  return -1;
 }
 
 /*
