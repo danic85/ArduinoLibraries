@@ -72,3 +72,13 @@ int CD74HC4067::nextChannel()
   return channel;
 }
 
+void CD74HC4067::stepRight()
+{
+  _lastChannel = 9; // @todo complete. start from 10 for now
+}
+
+void CD74HC4067::stepLeft()
+{
+  // @todo complete
+}
+

@@ -37,14 +37,21 @@ void loop()
   
   int lightActions[] = {LIGHT_ON, LIGHT_OFF};
   int motorActions[] = {DIRECTION_FORWARDS, DIRECTION_BACKWARDS, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_STOP};
+  int sensorActions[] = {SENSOR_READ};
 
   int motorAction = getMatch(value, motorActions,  (int)( sizeof(motorActions) / sizeof(motorActions[0])));
+  int lightAction = getMatch(value, lightActions,  (int)( sizeof(lightActions) / sizeof(lightActions[0])));
+  int sensorAction = getMatch(value, sensorActions,  (int)( sizeof(sensorActions) / sizeof(sensorActions[0])));
+  
   if (motorAction > -1) motors.doAction(motorAction);
-  else 
+  else if (lightAction > -1) lights.doAction(lightAction);
+  else if (sensorAction > -1) 
   {
-    int lightAction = getMatch(value, lightActions,  (int)( sizeof(lightActions) / sizeof(lightActions[0])));
-    if (lightAction > -1) lights.doAction(lightAction);
+    int distance = sensor.doPing();
+    if (distance < 4) mux1.stepRight();
+    //else mux1.stepLeft();
   }
+  
 }
 
 /*

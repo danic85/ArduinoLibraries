@@ -15,6 +15,8 @@ class CD74HC4067
     CD74HC4067(int enablePin);
     int readChannel(int channel);
     int nextChannel();
+    void stepRight();
+    void stepLeft();
   private:
     int _lastChannel;
     int _enablePin;
