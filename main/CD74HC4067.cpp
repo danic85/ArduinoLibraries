@@ -52,6 +52,12 @@ int CD74HC4067::readChannel(int channel)
   //read the value at the SIG pin
   int val = analogRead(MUX_SIG);
 
+  // Loop if no value (end of thread)
+  if (val == 0)
+  {
+    return readChannel(0);
+  }
+
   //return the value
   return val;
 }

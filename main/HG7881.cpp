@@ -52,7 +52,6 @@ void HG7881::doAction(int direction)
             analogWrite( MOTOR_R_PWM, MOTOR_REVERSE_SPEED );
             break;
         default:
-            stop();
             break;
     }
 }

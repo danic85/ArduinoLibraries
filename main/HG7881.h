@@ -17,7 +17,7 @@
 
 #define MOTOR_DELAY 1000 // brief delay for abrupt motor changes
 
-#define DIRECTION_STOP 0
+#define DIRECTION_STOP 991
 #define DIRECTION_FORWARDS 981
 #define DIRECTION_BACKWARDS 975
 #define DIRECTION_LEFT 236

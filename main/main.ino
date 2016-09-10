@@ -6,11 +6,13 @@
 #include "HG7881.h"
 #include "Lights.h"
 #include "CD74HC4067.h"
+#include "HCSR04.h"
 
 // Initialise Modules
 HG7881 motors;
 Lights lights;
 CD74HC4067 mux1(A1);
+HCSR04 sensor;
 
 void setup() 
 {
@@ -22,6 +24,9 @@ void loop()
 {
   delay(SHELL_ITERATION_DELAY);
 
+  long distance = sensor.doPing();
+  Serial.print("Sensor distance: ");
+  Serial.println(distance);
 
   // Read value of next multiplexer channel
   int channel = mux1.nextChannel();
