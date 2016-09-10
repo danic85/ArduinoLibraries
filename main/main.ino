@@ -1,7 +1,7 @@
 //#define SHELL_READ_PIN 0
 #define READING_TOLERANCE 5
 
-#define SHELL_ITERATION_DELAY 3000
+#define SHELL_ITERATION_DELAY 1000
 
 #include "HG7881.h"
 #include "Lights.h"
@@ -30,17 +30,15 @@ void loop()
   int value = mux1.readChannel(channel);
   Serial.println(value);
   
-  //@todo implement array checking.
   int lightActions[] = {LIGHT_ON, LIGHT_OFF};
   int motorActions[] = {DIRECTION_FORWARDS, DIRECTION_BACKWARDS, DIRECTION_LEFT, DIRECTION_RIGHT, DIRECTION_STOP};
 
-  int action = isMatch(value, motorActions,  (int)( sizeof(motorActions) / sizeof(motorActions[0])));
-  
-  if (action > -1) motors.doAction(action);
+  int motorAction = getMatch(value, motorActions,  (int)( sizeof(motorActions) / sizeof(motorActions[0])));
+  if (motorAction > -1) motors.doAction(motorAction);
   else 
   {
-    action = isMatch(value, lightActions,  (int)( sizeof(lightActions) / sizeof(lightActions[0])));
-    if (action > -1) lights.doAction(action);
+    int lightAction = getMatch(value, lightActions,  (int)( sizeof(lightActions) / sizeof(lightActions[0])));
+    if (lightAction > -1) lights.doAction(lightAction);
   }
 }
 
@@ -55,12 +53,10 @@ bool isMatch (int value, int action)
 /*
  * Action matches one in array
  */
-int isMatch (int value, int *actions, int len)
+int getMatch (int value, int *actions, int len)
 {
     for (int i; i < len; i++)
     {
-//        Serial.print("Checking: ");
-//        Serial.println(actions[i]);
         bool match = isMatch(value, actions[i]);
         if (match) return actions[i];
     }
